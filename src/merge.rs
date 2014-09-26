@@ -1,48 +1,9 @@
-use collections::treemap::TreeMap;
 use serialize::json;
-use serialize::json::{Json, JsonObject};
+use serialize::json::{Json};
 use serialize::json::ToJson;
 
 use mutable_json::MutableJson;
-
-fn object_from_list(obj: &Json) -> Json {
-	let list = obj.as_list().unwrap();
-	let mut tree: TreeMap<String,Json> = TreeMap::new();
-
-	for (idx, item) in list.iter().enumerate() {
-		tree.insert(idx.to_string(), item.clone());
-	}
-
-	tree.to_json()
-}
-
-fn index(obj: &JsonObject) -> Option<uint> {
-	let mut index = 0;
-	let mut has_index = false;
-	for key in obj.keys() {
-		let num_key: Option<uint> = from_str(key.as_slice());
-		match num_key {
-			Some(idx) if index <= idx => { 
-				index = idx; 
-				has_index = true; 
-			},
-			_ => ()
-		}
-	}
-
-	if has_index {
-		Some(index)
-	} else {
-		None
-	}
-}
-
-fn next_index(obj: &JsonObject) -> uint {
-	match index(obj) {
-		Some(idx) => idx + 1,
-		None => 0
-	}
-}
+use helpers::{object_from_list, next_index, create_array, push_item_to_array};
 
 fn merge_object_and_array(to: &mut Json, from: &Json) -> Option<Json> {
 	let tree = to.as_object_mut().unwrap();
@@ -92,9 +53,7 @@ fn merge_object_and_object(to: &mut Json, from: &Json) -> Option<Json> {
 	for (key, value) in from_tree.iter() {
 		let has_dest_obj = {
 			match to_tree.find(key) {
-				Some(&json::Object(_)) => true,
-				Some(&json::List(_)) => true,
-				Some(_) => false,
+				Some(_) => true,
 				None => false
 			}
 		};
@@ -106,7 +65,13 @@ fn merge_object_and_object(to: &mut Json, from: &Json) -> Option<Json> {
 				None => ()
 			}
 		} else {
-			to_tree.insert(key.to_string(), value.clone());
+			let value = if is_merger(value) {
+				let mut list = create_array();
+				merge(&mut list, value).unwrap_or(list)
+			} else {
+				value.clone()
+			};
+			to_tree.insert(key.to_string(), value);
 		}
 	    
 	}
@@ -156,6 +121,10 @@ fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
 }
 
 fn is_merger(obj: &Json) -> bool {
+	if !obj.is_object() {
+		return false;
+	}
+
 	let tree = obj.as_object().unwrap();
 	let idx = tree.find(&"__idx".to_string());
 	match idx {
@@ -166,15 +135,21 @@ fn is_merger(obj: &Json) -> bool {
 
 fn merge_list_and_object(to: &mut Json, from: &Json) -> Option<Json> {
 	let mut to_tree = object_from_list(to);
-
 	merge(&mut to_tree, from);
 	Some(to_tree)
 }
 
+fn merge_string_and_json(to: &mut Json, from: &Json) -> Option<Json> {
+	let mut list = create_array();
+	push_item_to_array(&mut list, to.clone());
+	push_item_to_array(&mut list, from.clone());
+
+	Some(list)
+}
 
 pub fn merge(target: &mut Json, source: &Json) -> Option<Json> {
 
-	println!("Merge {} with {}", target.to_pretty_str(), source.to_pretty_str());
+	println!("Merge {} and {}", target.to_string(), source.to_string());
 
 	match target {
 		&json::Object(_) => {
@@ -196,7 +171,7 @@ pub fn merge(target: &mut Json, source: &Json) -> Option<Json> {
 			}
 		},
 		&json::String(_) => {
-			return Some(source.clone())
+			return merge_string_and_json(target, source)
 		}
 		_ => fail!("Unknown merge")
 	}
