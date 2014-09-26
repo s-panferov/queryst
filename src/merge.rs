@@ -104,7 +104,6 @@ fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
 		match merge_result {
 			Some(result) => { 
 				to_vec.remove(to_index);
-				println!("Insert {}", result);
 				to_vec.insert(to_index, result);
 			},
 			None => ()
@@ -148,8 +147,6 @@ fn merge_string_and_json(to: &mut Json, from: &Json) -> Option<Json> {
 }
 
 pub fn merge(target: &mut Json, source: &Json) -> Option<Json> {
-
-	println!("Merge {} and {}", target.to_string(), source.to_string());
 
 	match target {
 		&json::Object(_) => {
