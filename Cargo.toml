@@ -3,3 +3,6 @@
 name = "rust-query"
 version = "0.0.1"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
+
+[dependencies.url]
+git = "https://github.com/servo/rust-url.git"
