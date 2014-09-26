@@ -62,12 +62,12 @@ You may specify an index as well:
 
 ```javascript
 parse('a[0]=c&a[1]=b');
-// { "a": ["b", "c"] }
+// { "a": ["c", "b"] }
 ```
 
 Note that the only difference between an index in an array and a key in an object is that the value between the brackets must be a number to create an array. 
 
-**rust-query** does't allow to specify sparse indexes on arrays and will convert target array to object:
+**rust-query** **does't** allow to specify sparse indexes on arrays and will convert target array to object:
 
 ```javascript
 parse('a[1]=b&a[15]=c');
