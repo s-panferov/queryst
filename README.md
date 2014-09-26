@@ -1,7 +1,9 @@
 rust-query
 =======
 
-A querystring parsing library for Rust inspired by https://github.com/hapijs/qs.
+A querystring parsing library for Rust inspired by https://github.com/hapijs/qs. A part of REST-like API micro-framework [Raisin].
+
+[Raisin]: https://github.com/s-panferov/raisin
 
 ## Usage
 
