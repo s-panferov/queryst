@@ -9,8 +9,8 @@ use url::percent_encoding::lossy_utf8_percent_decode;
 use merge::merge;
 use helpers::{create_array, push_item_to_array};
 
-static parent_regexp: Regex = regex!(r"^([^][]+)");
-static child_regexp: Regex = regex!(r"(\[[^][]*\])");
+static PARENT_REGEX: Regex = regex!(r"^([^][]+)");
+static CHILD_REGEX: Regex = regex!(r"(\[[^][]*\])");
 
 #[deriving(Show)]
 pub enum ParseErrorKind {
@@ -55,7 +55,7 @@ fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
 fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     let mut keys: Vec<String> = vec![];
 
-    match parent_regexp.captures(key) {
+    match PARENT_REGEX.captures(key) {
         Some(captures) => {
             match decode_component(captures.at(1)) {
                 Ok(decoded_key) => keys.push(decoded_key),
@@ -65,7 +65,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
         None => ()
     };
 
-    for captures in child_regexp.captures_iter(key) {
+    for captures in CHILD_REGEX.captures_iter(key) {
         match decode_component(captures.at(1)) {
             Ok(decoded_key) => keys.push(decoded_key),
             Err(err_msg) => return Err(ParseError{ kind: DecodingError, message: err_msg })
