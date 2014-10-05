@@ -146,29 +146,34 @@ fn merge_string_and_json(to: &mut Json, from: &Json) -> Option<Json> {
     Some(list)
 }
 
-pub fn merge(target: &mut Json, source: &Json) -> Option<Json> {
+fn merge_list_and_string(to: &mut Json, from: &Json) -> Option<Json> {
+    push_item_to_array(to, from.clone());
+    None
+}
 
-    match target {
+pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
+
+    match to {
         &json::Object(_) => {
-            match source {
-                &json::List(_) => merge_object_and_array(target, source),
-                &json::Object(_) if is_merger(source) => merge_object_and_merger(target, source),
-                &json::Object(_) => merge_object_and_object(target, source),
-                &json::String(_) => return Some(source.clone()),
+            match from {
+                &json::List(_) => merge_object_and_array(to, from),
+                &json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
+                &json::Object(_) => merge_object_and_object(to, from),
+                &json::String(_) => return Some(from.clone()),
                 _ => fail!("Unknown merge")
             }
         }
         &json::List(_) => {
-            match source {
-                &json::List(_) => merge_list_and_list(target, source),
-                &json::Object(_) if is_merger(source) => merge_list_and_merger(target, source),
-                &json::Object(_) => merge_list_and_object(target, source),
-                &json::String(_) => return Some(source.clone()),
+            match from {
+                &json::List(_) => merge_list_and_list(to, from),
+                &json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
+                &json::Object(_) => merge_list_and_object(to, from),
+                &json::String(_) => merge_list_and_string(to, from),
                 _ => fail!("Unknown merge")
             }
         },
         &json::String(_) => {
-            return merge_string_and_json(target, source)
+            return merge_string_and_json(to, from)
         }
         _ => fail!("Unknown merge")
     }

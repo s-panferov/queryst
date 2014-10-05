@@ -159,8 +159,8 @@ fn it_parses_nested_string() {
 
 #[test]
 fn it_parses_simple_array() {
-    assert_eq!(parse("a=b&a=c").unwrap().to_string(), 
-        r#"{"a":["b","c"]}"#.to_string())
+    assert_eq!(parse("a=b&a=c&a=d&a=e").unwrap().to_string(), 
+        r#"{"a":["b","c","d","e"]}"#.to_string())
 }
 
 #[test]
