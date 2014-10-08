@@ -5,6 +5,9 @@ A querystring parsing library for Rust inspired by https://github.com/hapijs/qs.
 
 [Rustless]: https://github.com/rustless/rustless
 
+### Status
+[![Build Status](https://travis-ci.org/rustless/rust-query.svg?branch=master)](https://travis-ci.org/rustless/rust-query)
+
 ## Usage
 
 Use **rust-query** library to parse query-string to corresponding [json] values.
