@@ -1,6 +1,6 @@
 [package]
 
-name = "query"
+name = "queryst"
 version = "0.1.0"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
 
