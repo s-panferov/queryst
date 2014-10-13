@@ -1,10 +1,18 @@
+## What is Queryst?
+
+[![Build Status](https://travis-ci.org/rustless/queryst.svg?branch=master)](https://travis-ci.org/rustless/queryst)
 
 A query string parsing library for Rust inspired by https://github.com/hapijs/qs. A part of REST-like API micro-framework [Rustless].
 
-[Rustless]: https://github.com/rustless/rustless
+```toml
+# Cargo.toml
+[dependencies.queryst]
+git = "https://github.com/rustless/queryst"
+```
 
-### Status
-[![Build Status](https://travis-ci.org/rustless/queryst.svg?branch=master)](https://travis-ci.org/rustless/queryst)
+[API docs](http://queryst.rustless.org/doc/queryst/)
+
+[Rustless]: https://github.com/rustless/rustless
 
 ## Usage
 
