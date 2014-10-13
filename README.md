@@ -10,7 +10,7 @@ A query string parsing library for Rust inspired by https://github.com/hapijs/qs
 git = "https://github.com/rustless/queryst"
 ```
 
-[API docs](http://queryst.rustless.org/doc/queryst/)
+[API docs](http://rustless.org/queryst/doc/queryst)
 
 [Rustless]: https://github.com/rustless/rustless
 
