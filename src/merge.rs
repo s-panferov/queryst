@@ -100,7 +100,7 @@ fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
 
     if to_index < to_vec.len() {
         // merge existing item
-        let merge_result = merge(to_vec.get_mut(to_index), source_obj);
+        let merge_result = merge(&mut to_vec[to_index], source_obj);
         match merge_result {
             Some(result) => { 
                 to_vec.remove(to_index);
@@ -160,7 +160,7 @@ pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
                 &json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
                 &json::Object(_) => merge_object_and_object(to, from),
                 &json::String(_) => return Some(from.clone()),
-                _ => fail!("Unknown merge")
+                _ => panic!("Unknown merge")
             }
         }
         &json::List(_) => {
@@ -169,13 +169,13 @@ pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
                 &json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
                 &json::Object(_) => merge_list_and_object(to, from),
                 &json::String(_) => merge_list_and_string(to, from),
-                _ => fail!("Unknown merge")
+                _ => panic!("Unknown merge")
             }
         },
         &json::String(_) => {
             return merge_string_and_json(to, from)
         }
-        _ => fail!("Unknown merge")
+        _ => panic!("Unknown merge")
     }
 
 } 
