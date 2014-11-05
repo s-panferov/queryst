@@ -1,7 +1,7 @@
 use serialize::json;
 use serialize::json::{Json, JsonObject};
 use serialize::json::ToJson;
-use collections::treemap::TreeMap;
+use collections::tree_map::TreeMap;
 
 use mutable_json::MutableJson;
 

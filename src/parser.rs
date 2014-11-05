@@ -1,6 +1,6 @@
 
 use regex::Regex;
-use collections::treemap::TreeMap;
+use collections::tree_map::TreeMap;
 use serialize::json;
 use serialize::json::{Json};
 use serialize::json::ToJson;
