@@ -22,10 +22,10 @@ fn merge_object_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     let to_tree = to.as_object_mut().unwrap();
     let from_tree = from.as_object().unwrap();
 
-    let to_index = from_tree.find(&"__idx".to_string()).unwrap().as_u64().unwrap().to_string();
-    let source_obj = from_tree.find(&"__object".to_string()).unwrap();
+    let to_index = from_tree.get(&"__idx".to_string()).unwrap().as_u64().unwrap().to_string();
+    let source_obj = from_tree.get(&"__object".to_string()).unwrap();
     let has_dest_obj = {
-        match to_tree.find(&to_index) {
+        match to_tree.get(&to_index) {
             Some(&json::Object(_)) => true,
             Some(&json::List(_)) => true,
             Some(_) => false,
@@ -34,7 +34,7 @@ fn merge_object_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     };
 
     if has_dest_obj {
-        let merge_result = merge(to_tree.find_mut(&to_index).unwrap(), source_obj);
+        let merge_result = merge(to_tree.get_mut(&to_index).unwrap(), source_obj);
         match merge_result {
             Some(result) => { to_tree.insert(to_index, result); },
             None => ()
@@ -52,14 +52,14 @@ fn merge_object_and_object(to: &mut Json, from: &Json) -> Option<Json> {
 
     for (key, value) in from_tree.iter() {
         let has_dest_obj = {
-            match to_tree.find(key) {
+            match to_tree.get(key) {
                 Some(_) => true,
                 None => false
             }
         };
 
         if has_dest_obj {
-            let merge_result = merge(to_tree.find_mut(key).unwrap(), value);
+            let merge_result = merge(to_tree.get_mut(key).unwrap(), value);
             match merge_result {
                 Some(result) => { to_tree.insert(key.to_string(), result); },
                 None => ()
@@ -95,8 +95,8 @@ fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     let to_vec = to.as_list_mut().unwrap();
 
     let from_tree = from.as_object().unwrap();
-    let to_index = from_tree.find(&"__idx".to_string()).unwrap().as_u64().unwrap() as uint;
-    let source_obj = from_tree.find(&"__object".to_string()).unwrap();
+    let to_index = from_tree.get(&"__idx".to_string()).unwrap().as_u64().unwrap() as uint;
+    let source_obj = from_tree.get(&"__object".to_string()).unwrap();
 
     if to_index < to_vec.len() {
         // merge existing item
@@ -125,7 +125,7 @@ fn is_merger(obj: &Json) -> bool {
     }
 
     let tree = obj.as_object().unwrap();
-    let idx = tree.find(&"__idx".to_string());
+    let idx = tree.get(&"__idx".to_string());
     match idx {
         Some(idx) => idx.is_number(),
         None => false
