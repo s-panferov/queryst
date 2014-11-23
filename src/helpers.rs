@@ -6,7 +6,7 @@ use collections::tree_map::TreeMap;
 use mutable_json::MutableJson;
 
 pub fn object_from_list(obj: &Json) -> Json {
-    let list = obj.as_list().unwrap();
+    let list = obj.as_array().unwrap();
     let mut tree: TreeMap<String,Json> = TreeMap::new();
 
     for (idx, item) in list.iter().enumerate() {
@@ -46,10 +46,10 @@ pub fn next_index(obj: &JsonObject) -> uint {
 
 pub fn create_array() -> Json {
     let vec: Vec<Json> = vec![];
-    return json::List(vec);
+    return json::Array(vec);
 }
 
 pub fn push_item_to_array(array: &mut Json, item: Json) {
-    let vec = array.as_list_mut().unwrap();
+    let vec = array.as_array_mut().unwrap();
     vec.push(item);
 }

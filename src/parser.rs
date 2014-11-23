@@ -59,7 +59,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
         Some(captures) => {
             match decode_component(captures.at(1)) {
                 Ok(decoded_key) => keys.push(decoded_key),
-                Err(err_msg) => return Err(ParseError{ kind: DecodingError, message: err_msg })
+                Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
             }
         }
         None => ()
@@ -68,7 +68,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     for captures in CHILD_REGEX.captures_iter(key) {
         match decode_component(captures.at(1)) {
             Ok(decoded_key) => keys.push(decoded_key),
-            Err(err_msg) => return Err(ParseError{ kind: DecodingError, message: err_msg })
+            Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
         }
     }
 
@@ -135,7 +135,7 @@ pub fn parse(params: &str) -> ParseResult<Json> {
         let key_chain = parse_key_res.slice_from(0);
         let decoded_value = match decode_component(value.unwrap_or("")) {
             Ok(val) => val,
-            Err(err) => return Err(ParseError{ kind: DecodingError, message: err })
+            Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
         };
         let partial = apply_object(key_chain, decoded_value.to_json());
         merge(&mut obj, &partial);
