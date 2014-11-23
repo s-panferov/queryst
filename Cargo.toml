@@ -4,5 +4,5 @@ name = "queryst"
 version = "0.1.0"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
 
-[dependencies.url]
-git = "https://github.com/servo/rust-url.git"
+[dependencies]
+url = "~0.2.0"
