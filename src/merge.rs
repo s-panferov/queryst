@@ -7,7 +7,7 @@ use helpers::{object_from_list, next_index, create_array, push_item_to_array};
 
 fn merge_object_and_array(to: &mut Json, from: &Json) -> Option<Json> {
     let tree = to.as_object_mut().unwrap();
-    let vec = from.as_list().unwrap();
+    let vec = from.as_array().unwrap();
     let index = next_index(tree);
 
     for (idx, item) in vec.iter().enumerate() {
@@ -27,7 +27,7 @@ fn merge_object_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     let has_dest_obj = {
         match to_tree.get(&to_index) {
             Some(&json::Object(_)) => true,
-            Some(&json::List(_)) => true,
+            Some(&json::Array(_)) => true,
             Some(_) => false,
             None => false
         }
@@ -80,8 +80,8 @@ fn merge_object_and_object(to: &mut Json, from: &Json) -> Option<Json> {
 }
 
 fn merge_list_and_list(to: &mut Json, from: &Json) -> Option<Json> {
-    let to_vec = to.as_list_mut().unwrap();
-    let from_vec = from.as_list().unwrap();
+    let to_vec = to.as_array_mut().unwrap();
+    let from_vec = from.as_array().unwrap();
 
     for value in from_vec.iter() {
         to_vec.push(value.clone());
@@ -92,7 +92,7 @@ fn merge_list_and_list(to: &mut Json, from: &Json) -> Option<Json> {
 
 fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     
-    let to_vec = to.as_list_mut().unwrap();
+    let to_vec = to.as_array_mut().unwrap();
 
     let from_tree = from.as_object().unwrap();
     let to_index = from_tree.get(&"__idx".to_string()).unwrap().as_u64().unwrap() as uint;
@@ -156,16 +156,16 @@ pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
     match to {
         &json::Object(_) => {
             match from {
-                &json::List(_) => merge_object_and_array(to, from),
+                &json::Array(_) => merge_object_and_array(to, from),
                 &json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
                 &json::Object(_) => merge_object_and_object(to, from),
                 &json::String(_) => return Some(from.clone()),
                 _ => panic!("Unknown merge")
             }
         }
-        &json::List(_) => {
+        &json::Array(_) => {
             match from {
-                &json::List(_) => merge_list_and_list(to, from),
+                &json::Array(_) => merge_list_and_list(to, from),
                 &json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
                 &json::Object(_) => merge_list_and_object(to, from),
                 &json::String(_) => merge_list_and_string(to, from),
