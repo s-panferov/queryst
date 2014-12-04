@@ -1,8 +1,11 @@
 [package]
 
 name = "queryst"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
+description = "Rust query string parser with nesting support"
+keywords = ["json", "web", "url", "parser"]
+license = "MIT"
 
 [dependencies]
 url = "~0.2.0"
