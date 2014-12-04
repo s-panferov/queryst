@@ -1,9 +1,6 @@
-
 use regex::Regex;
 use collections::tree_map::TreeMap;
-use serialize::json;
-use serialize::json::{Json};
-use serialize::json::ToJson;
+use serialize::json::{Json, ToJson};
 use url::percent_encoding::lossy_utf8_percent_decode;
 
 use merge::merge;
@@ -87,13 +84,13 @@ fn create_idx_merger(idx: uint, obj: Json) -> Json {
     let mut tree: TreeMap<String,Json> = TreeMap::new();
     tree.insert("__idx".to_string(), idx.to_json());
     tree.insert("__object".to_string(), obj);
-    return json::Object(tree)
+    return Json::Object(tree)
 }
 
 fn create_object_with_key(key: String, obj: Json) -> Json {
     let mut tree: TreeMap<String,Json> = TreeMap::new();
     tree.insert(key, obj);
-    return json::Object(tree)
+    return Json::Object(tree)
 }
 
 fn apply_object(keys: &[String], val: Json) -> Json {

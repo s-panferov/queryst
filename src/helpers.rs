@@ -1,5 +1,4 @@
-use serialize::json;
-use serialize::json::{Json, JsonObject};
+use serialize::json::{Json, Object};
 use serialize::json::ToJson;
 use collections::tree_map::TreeMap;
 
@@ -16,7 +15,7 @@ pub fn object_from_list(obj: &Json) -> Json {
     tree.to_json()
 }
 
-fn index(obj: &JsonObject) -> Option<uint> {
+fn index(obj: &Object) -> Option<uint> {
     let mut index = 0;
     let mut has_index = false;
     for key in obj.keys() {
@@ -37,7 +36,7 @@ fn index(obj: &JsonObject) -> Option<uint> {
     }
 }
 
-pub fn next_index(obj: &JsonObject) -> uint {
+pub fn next_index(obj: &Object) -> uint {
     match index(obj) {
         Some(idx) => idx + 1,
         None => 0
@@ -46,7 +45,7 @@ pub fn next_index(obj: &JsonObject) -> uint {
 
 pub fn create_array() -> Json {
     let vec: Vec<Json> = vec![];
-    return json::Array(vec);
+    return Json::Array(vec);
 }
 
 pub fn push_item_to_array(array: &mut Json, item: Json) {
