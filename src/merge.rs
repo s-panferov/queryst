@@ -1,6 +1,4 @@
-use serialize::json;
-use serialize::json::{Json};
-use serialize::json::ToJson;
+use serialize::json::{Json, ToJson};
 
 use mutable_json::MutableJson;
 use helpers::{object_from_list, next_index, create_array, push_item_to_array};
@@ -26,8 +24,8 @@ fn merge_object_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     let source_obj = from_tree.get(&"__object".to_string()).unwrap();
     let has_dest_obj = {
         match to_tree.get(&to_index) {
-            Some(&json::Object(_)) => true,
-            Some(&json::Array(_)) => true,
+            Some(&Json::Object(_)) => true,
+            Some(&Json::Array(_)) => true,
             Some(_) => false,
             None => false
         }
@@ -154,25 +152,25 @@ fn merge_list_and_string(to: &mut Json, from: &Json) -> Option<Json> {
 pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
 
     match to {
-        &json::Object(_) => {
+        &Json::Object(_) => {
             match from {
-                &json::Array(_) => merge_object_and_array(to, from),
-                &json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
-                &json::Object(_) => merge_object_and_object(to, from),
-                &json::String(_) => return Some(from.clone()),
+                &Json::Array(_) => merge_object_and_array(to, from),
+                &Json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
+                &Json::Object(_) => merge_object_and_object(to, from),
+                &Json::String(_) => return Some(from.clone()),
                 _ => panic!("Unknown merge")
             }
         }
-        &json::Array(_) => {
+        &Json::Array(_) => {
             match from {
-                &json::Array(_) => merge_list_and_list(to, from),
-                &json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
-                &json::Object(_) => merge_list_and_object(to, from),
-                &json::String(_) => merge_list_and_string(to, from),
+                &Json::Array(_) => merge_list_and_list(to, from),
+                &Json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
+                &Json::Object(_) => merge_list_and_object(to, from),
+                &Json::String(_) => merge_list_and_string(to, from),
                 _ => panic!("Unknown merge")
             }
         },
-        &json::String(_) => {
+        &Json::String(_) => {
             return merge_string_and_json(to, from)
         }
         _ => panic!("Unknown merge")
