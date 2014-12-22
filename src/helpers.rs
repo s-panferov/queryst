@@ -1,12 +1,12 @@
 use serialize::json::{Json, Object};
 use serialize::json::ToJson;
-use collections::tree_map::TreeMap;
+use collections::BTreeMap;
 
 use mutable_json::MutableJson;
 
 pub fn object_from_list(obj: &Json) -> Json {
     let list = obj.as_array().unwrap();
-    let mut tree: TreeMap<String,Json> = TreeMap::new();
+    let mut tree: BTreeMap<String,Json> = BTreeMap::new();
 
     for (idx, item) in list.iter().enumerate() {
         tree.insert(idx.to_string(), item.clone());

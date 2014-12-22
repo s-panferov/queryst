@@ -1,5 +1,5 @@
 use regex::Regex;
-use collections::tree_map::TreeMap;
+use collections::BTreeMap;
 use serialize::json::{Json, ToJson};
 use url::percent_encoding::lossy_utf8_percent_decode;
 
@@ -10,6 +10,7 @@ static PARENT_REGEX: Regex = regex!(r"^([^][]+)");
 static CHILD_REGEX: Regex = regex!(r"(\[[^][]*\])");
 
 #[deriving(Show)]
+#[allow(missing_copy_implementations)]
 pub enum ParseErrorKind {
     DecodingError,
     Other
@@ -54,7 +55,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
 
     match PARENT_REGEX.captures(key) {
         Some(captures) => {
-            match decode_component(captures.at(1)) {
+            match decode_component(captures.at(1).unwrap()) {
                 Ok(decoded_key) => keys.push(decoded_key),
                 Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
             }
@@ -63,7 +64,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     };
 
     for captures in CHILD_REGEX.captures_iter(key) {
-        match decode_component(captures.at(1)) {
+        match decode_component(captures.at(1).unwrap()) {
             Ok(decoded_key) => keys.push(decoded_key),
             Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
         }
@@ -81,14 +82,14 @@ fn cleanup_key(key: &str) -> &str {
 }
 
 fn create_idx_merger(idx: uint, obj: Json) -> Json {
-    let mut tree: TreeMap<String,Json> = TreeMap::new();
+    let mut tree: BTreeMap<String,Json> = BTreeMap::new();
     tree.insert("__idx".to_string(), idx.to_json());
     tree.insert("__object".to_string(), obj);
     return Json::Object(tree)
 }
 
 fn create_object_with_key(key: String, obj: Json) -> Json {
-    let mut tree: TreeMap<String,Json> = TreeMap::new();
+    let mut tree: BTreeMap<String,Json> = BTreeMap::new();
     tree.insert(key, obj);
     return Json::Object(tree)
 }
@@ -124,7 +125,7 @@ fn apply_object(keys: &[String], val: Json) -> Json {
 }
 
 pub fn parse(params: &str) -> ParseResult<Json> {
-    let tree: TreeMap<String,Json> = TreeMap::new();
+    let tree: BTreeMap<String,Json> = BTreeMap::new();
     let mut obj = tree.to_json();
     let pairs = parse_pairs(params);
     for &(key, value) in pairs.iter() {
@@ -143,9 +144,9 @@ pub fn parse(params: &str) -> ParseResult<Json> {
 
 #[test]
 fn it_parses_simple_string() {
-    assert_eq!(parse("0=foo").unwrap().to_string(), r#"{"0":"foo"}"#.to_string())
-    assert_eq!(parse("a[<=>]==23").unwrap().to_string(), r#"{"a":{"<=>":"=23"}}"#.to_string())
-    assert_eq!(parse(" foo = bar = baz ").unwrap().to_string(), r#"{" foo ":" bar = baz "}"#.to_string())
+    assert_eq!(parse("0=foo").unwrap().to_string(), r#"{"0":"foo"}"#.to_string());
+    assert_eq!(parse("a[<=>]==23").unwrap().to_string(), r#"{"a":{"<=>":"=23"}}"#.to_string());
+    assert_eq!(parse(" foo = bar = baz ").unwrap().to_string(), r#"{" foo ":" bar = baz "}"#.to_string());
 }
 
 #[test]
