@@ -105,7 +105,7 @@ fn apply_object(keys: &[String], val: Json) -> Json {
             return new_array;
         } else {
             let key = cleanup_key(key.as_slice());
-            let array_index: Option<uint> = from_str(key);
+            let array_index: Option<uint> = key.parse();
 
             match array_index {
                 Some(idx) => {

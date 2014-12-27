@@ -19,7 +19,7 @@ fn index(obj: &Object) -> Option<uint> {
     let mut index = 0;
     let mut has_index = false;
     for key in obj.keys() {
-        let num_key: Option<uint> = from_str(key.as_slice());
+        let num_key: Option<uint> = key.as_slice().parse();
         match num_key {
             Some(idx) if index <= idx => { 
                 index = idx; 
