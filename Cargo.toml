@@ -1,7 +1,7 @@
 [package]
 
 name = "queryst"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
 description = "Rust query string parser with nesting support"
 repository = "https://github.com/rustless/queryst"
@@ -9,4 +9,6 @@ keywords = ["json", "web", "url", "parser"]
 license = "MIT"
 
 [dependencies]
-url = "~0.2.0"
+rustc-serialize = "*"
+url = "*"
+regex = "*"

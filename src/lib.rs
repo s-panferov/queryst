@@ -1,8 +1,11 @@
 #![feature(phase)]
+
+extern crate "rustc-serialize" as serialize;
+
 #[phase(plugin)]
 extern crate regex_macros;
 extern crate regex;
-extern crate serialize;
+
 extern crate collections;
 extern crate url;
 
