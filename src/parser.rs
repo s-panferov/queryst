@@ -9,14 +9,14 @@ use helpers::{create_array, push_item_to_array};
 static PARENT_REGEX: Regex = regex!(r"^([^][]+)");
 static CHILD_REGEX: Regex = regex!(r"(\[[^][]*\])");
 
-#[deriving(Show)]
+#[derive(Show)]
 #[allow(missing_copy_implementations)]
 pub enum ParseErrorKind {
     DecodingError,
     Other
 }
 
-#[deriving(Show)]
+#[derive(Show)]
 pub struct ParseError {
     pub kind: ParseErrorKind,
     pub message: String
