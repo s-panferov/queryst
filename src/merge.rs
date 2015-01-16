@@ -93,7 +93,7 @@ fn merge_list_and_merger(to: &mut Json, from: &Json) -> Option<Json> {
     let to_vec = to.as_array_mut().unwrap();
 
     let from_tree = from.as_object().unwrap();
-    let to_index = from_tree.get(&"__idx".to_string()).unwrap().as_u64().unwrap() as uint;
+    let to_index = from_tree.get(&"__idx".to_string()).unwrap().as_u64().unwrap() as usize;
     let source_obj = from_tree.get(&"__object".to_string()).unwrap();
 
     if to_index < to_vec.len() {
@@ -152,7 +152,7 @@ fn merge_list_and_string(to: &mut Json, from: &Json) -> Option<Json> {
 pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
 
     match to {
-        &Json::Object(_) => {
+        &mut Json::Object(_) => {
             match from {
                 &Json::Array(_) => merge_object_and_array(to, from),
                 &Json::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
@@ -161,7 +161,7 @@ pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
                 _ => panic!("Unknown merge")
             }
         }
-        &Json::Array(_) => {
+        &mut Json::Array(_) => {
             match from {
                 &Json::Array(_) => merge_list_and_list(to, from),
                 &Json::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
@@ -170,7 +170,7 @@ pub fn merge(to: &mut Json, from: &Json) -> Option<Json> {
                 _ => panic!("Unknown merge")
             }
         },
-        &Json::String(_) => {
+        &mut Json::String(_) => {
             return merge_string_and_json(to, from)
         }
         _ => panic!("Unknown merge")

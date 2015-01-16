@@ -15,11 +15,11 @@ pub fn object_from_list(obj: &Json) -> Json {
     tree.to_json()
 }
 
-fn index(obj: &Object) -> Option<uint> {
+fn index(obj: &Object) -> Option<usize> {
     let mut index = 0;
     let mut has_index = false;
     for key in obj.keys() {
-        let num_key: Option<uint> = key.as_slice().parse();
+        let num_key: Option<usize> = key.as_slice().parse();
         match num_key {
             Some(idx) if index <= idx => { 
                 index = idx; 
@@ -36,7 +36,7 @@ fn index(obj: &Object) -> Option<uint> {
     }
 }
 
-pub fn next_index(obj: &Object) -> uint {
+pub fn next_index(obj: &Object) -> usize {
     match index(obj) {
         Some(idx) => idx + 1,
         None => 0

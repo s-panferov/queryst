@@ -81,7 +81,7 @@ fn cleanup_key(key: &str) -> &str {
     }
 }
 
-fn create_idx_merger(idx: uint, obj: Json) -> Json {
+fn create_idx_merger(idx: usize, obj: Json) -> Json {
     let mut tree: BTreeMap<String,Json> = BTreeMap::new();
     tree.insert("__idx".to_string(), idx.to_json());
     tree.insert("__object".to_string(), obj);
@@ -105,7 +105,7 @@ fn apply_object(keys: &[String], val: Json) -> Json {
             return new_array;
         } else {
             let key = cleanup_key(key.as_slice());
-            let array_index: Option<uint> = key.parse();
+            let array_index: Option<usize> = key.parse();
 
             match array_index {
                 Some(idx) => {
