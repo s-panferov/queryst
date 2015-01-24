@@ -40,8 +40,8 @@ fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
         match separator {
             None => pairs.push((part, None)),
             Some(pos) => {
-                let key = part.slice_to(pos);
-                let val = part.slice_from(pos + 1);
+                let key = &part[..pos];
+                let val = &part[(pos + 1)..];
                 pairs.push((key, Some(val)));
             }
         }
@@ -130,7 +130,7 @@ pub fn parse(params: &str) -> ParseResult<Json> {
     let pairs = parse_pairs(params);
     for &(key, value) in pairs.iter() {
         let parse_key_res = try!(parse_key(key));
-        let key_chain = parse_key_res.slice_from(0);
+        let key_chain = &parse_key_res[0..];
         let decoded_value = match decode_component(value.unwrap_or("")) {
             Ok(val) => val,
             Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
@@ -144,58 +144,58 @@ pub fn parse(params: &str) -> ParseResult<Json> {
 
 #[test]
 fn it_parses_simple_string() {
-    assert_eq!(parse("0=foo").unwrap().to_string(), r#"{"0":"foo"}"#.to_string());
-    assert_eq!(parse("a[<=>]==23").unwrap().to_string(), r#"{"a":{"<=>":"=23"}}"#.to_string());
-    assert_eq!(parse(" foo = bar = baz ").unwrap().to_string(), r#"{" foo ":" bar = baz "}"#.to_string());
+    assert_eq!(parse("0=foo").ok().unwrap().to_string(), r#"{"0":"foo"}"#.to_string());
+    assert_eq!(parse("a[<=>]==23").ok().unwrap().to_string(), r#"{"a":{"<=>":"=23"}}"#.to_string());
+    assert_eq!(parse(" foo = bar = baz ").ok().unwrap().to_string(), r#"{" foo ":" bar = baz "}"#.to_string());
 }
 
 #[test]
 fn it_parses_nested_string() {
-    assert_eq!(parse("a[b][c][d][e][f][g][h]=i").unwrap().to_string(), 
+    assert_eq!(parse("a[b][c][d][e][f][g][h]=i").ok().unwrap().to_string(), 
         r#"{"a":{"b":{"c":{"d":{"e":{"f":{"g":{"h":"i"}}}}}}}}"#.to_string())
 }
 
 #[test]
 fn it_parses_simple_array() {
-    assert_eq!(parse("a=b&a=c&a=d&a=e").unwrap().to_string(), 
+    assert_eq!(parse("a=b&a=c&a=d&a=e").ok().unwrap().to_string(), 
         r#"{"a":["b","c","d","e"]}"#.to_string())
 }
 
 #[test]
 fn it_parses_explicit_array() {
-    assert_eq!(parse("a[]=b&a[]=c&a[]=d").unwrap().to_string(), 
+    assert_eq!(parse("a[]=b&a[]=c&a[]=d").ok().unwrap().to_string(), 
         r#"{"a":["b","c","d"]}"#.to_string())
 }
 
 #[test]
 fn it_parses_nested_array() {
-    assert_eq!(parse("a[b][]=c&a[b][]=d").unwrap().to_string(), 
+    assert_eq!(parse("a[b][]=c&a[b][]=d").ok().unwrap().to_string(), 
         r#"{"a":{"b":["c","d"]}}"#.to_string())
 }
 
 #[test]
 fn it_allows_to_specify_array_indexes() {
-    assert_eq!(parse("a[0][]=c&a[1][]=d").unwrap().to_string(), 
+    assert_eq!(parse("a[0][]=c&a[1][]=d").ok().unwrap().to_string(), 
         r#"{"a":[["c"],["d"]]}"#.to_string())
 }
 
 #[test]
 fn it_transforms_arrays_to_object() {
-    assert_eq!(parse("foo[0]=bar&foo[bad]=baz").unwrap().to_string(), 
+    assert_eq!(parse("foo[0]=bar&foo[bad]=baz").ok().unwrap().to_string(), 
         r#"{"foo":{"0":"bar","bad":"baz"}}"#.to_string());
 
-    assert_eq!(parse("foo[0][a]=a&foo[0][b]=b&foo[1][a]=aa&foo[1][b]=bb").unwrap().to_string(),
+    assert_eq!(parse("foo[0][a]=a&foo[0][b]=b&foo[1][a]=aa&foo[1][b]=bb").ok().unwrap().to_string(),
         r#"{"foo":[{"a":"a","b":"b"},{"a":"aa","b":"bb"}]}"#.to_string());
 }
 
 #[test]
 fn it_doesnt_produce_empty_keys() {
-    assert_eq!(parse("_r=1&").unwrap().to_string(),
+    assert_eq!(parse("_r=1&").ok().unwrap().to_string(),
         r#"{"_r":"1"}"#.to_string());
 }
 
 #[test]
 fn it_supports_encoded_strings() {
-    assert_eq!(parse("a[b%20c]=c%20d").unwrap().to_string(),
+    assert_eq!(parse("a[b%20c]=c%20d").ok().unwrap().to_string(),
         r#"{"a":{"b c":"c d"}}"#.to_string());
 }
