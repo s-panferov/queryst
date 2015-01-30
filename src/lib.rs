@@ -1,4 +1,5 @@
-#![allow(unstable)]
+#![feature(collections)]
+#![feature(core)]
 #![feature(plugin)]
 extern crate "rustc-serialize" as serialize;
 
