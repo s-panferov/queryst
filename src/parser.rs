@@ -9,14 +9,14 @@ use helpers::{create_array, push_item_to_array};
 static PARENT_REGEX: Regex = regex!(r"^([^][]+)");
 static CHILD_REGEX: Regex = regex!(r"(\[[^][]*\])");
 
-#[derive(Show)]
+#[derive(Debug)]
 #[allow(missing_copy_implementations)]
 pub enum ParseErrorKind {
     DecodingError,
     Other
 }
 
-#[derive(Show)]
+#[derive(Debug)]
 pub struct ParseError {
     pub kind: ParseErrorKind,
     pub message: String
@@ -105,15 +105,15 @@ fn apply_object(keys: &[String], val: Json) -> Json {
             return new_array;
         } else {
             let key = cleanup_key(key.as_slice());
-            let array_index: Option<usize> = key.parse();
+            let array_index = key.parse();
 
             match array_index {
-                Some(idx) => {
+                Ok(idx) => {
                     let result = apply_object(keys.tail(), val);
                     let item = create_idx_merger(idx, result);
                     return item;
                 },
-                None => {
+                Err(_) => {
                     return create_object_with_key(key.to_string(), apply_object(keys.tail(), val));
                 }
             }

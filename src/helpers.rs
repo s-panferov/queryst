@@ -19,9 +19,9 @@ fn index(obj: &Object) -> Option<usize> {
     let mut index = 0;
     let mut has_index = false;
     for key in obj.keys() {
-        let num_key: Option<usize> = key.as_slice().parse();
+        let num_key = key.as_slice().parse();
         match num_key {
-            Some(idx) if index <= idx => { 
+            Ok(idx) if index <= idx => { 
                 index = idx; 
                 has_index = true; 
             },
