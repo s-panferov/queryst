@@ -32,10 +32,10 @@ fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
 
     let mut pairs = vec![];
 
-    for part in body.split_str("&") {
-        let separator = part.find_str("]=")
+    for part in body.split("&") {
+        let separator = part.find("]=")
                             .and_then(|pos| Some(pos+1))
-                            .or_else(|| part.find_str("="));
+                            .or_else(|| part.find("="));
 
         match separator {
             None => pairs.push((part, None)),
