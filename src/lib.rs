@@ -1,8 +1,7 @@
 #![feature(collections)]
-#![feature(core)]
 #![feature(plugin)]
 #![plugin(regex_macros)]
-extern crate "rustc-serialize" as serialize;
+extern crate rustc_serialize as serialize;
 
 extern crate regex;
 

@@ -98,13 +98,13 @@ fn apply_object(keys: &[String], val: Json) -> Json {
 
     if keys.len() > 0 {
         let key = keys.get(0).unwrap();
-        if key.as_slice() == "[]" {
+        if key == "[]" {
             let mut new_array = create_array();
             let item = apply_object(keys.tail(), val);
             push_item_to_array(&mut new_array, item);
             return new_array;
         } else {
-            let key = cleanup_key(key.as_slice());
+            let key = cleanup_key(key);
             let array_index = key.parse();
 
             match array_index {
