@@ -1,12 +1,10 @@
-#![feature(collections)]
-#![feature(plugin)]
-#![plugin(regex_macros)]
 extern crate rustc_serialize as serialize;
 
 extern crate regex;
-
-extern crate collections;
 extern crate url;
+
+#[macro_use]
+extern crate lazy_static;
 
 pub use parser::{parse, ParseResult, ParseError, ParseErrorKind};
 

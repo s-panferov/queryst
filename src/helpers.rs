@@ -1,6 +1,6 @@
 use serialize::json::{Json, Object};
 use serialize::json::ToJson;
-use collections::BTreeMap;
+use std::collections::BTreeMap;
 
 use mutable_json::MutableJson;
 

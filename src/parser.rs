@@ -1,13 +1,15 @@
 use regex::Regex;
-use collections::BTreeMap;
+use std::collections::BTreeMap;
 use serialize::json::{Json, ToJson};
 use url::percent_encoding::lossy_utf8_percent_decode;
 
 use merge::merge;
 use helpers::{create_array, push_item_to_array};
 
-static PARENT_REGEX: Regex = regex!(r"^([^][]+)");
-static CHILD_REGEX: Regex = regex!(r"(\[[^][]*\])");
+lazy_static! {
+    static ref PARENT_REGEX: Regex = Regex::new(r"^([^][]+)").unwrap();
+    static ref CHILD_REGEX: Regex = Regex::new(r"(\[[^][]*\])").unwrap();
+}
 
 #[derive(Debug)]
 #[allow(missing_copy_implementations)]
@@ -73,9 +75,38 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     Ok(keys)
 }
 
+trait StrExt {
+    fn _slice_chars<'a>(&'a self, begin: usize, end: usize) -> &'a str;
+}
+
+impl StrExt for str {
+    fn _slice_chars(&self, begin: usize, end: usize) -> &str {
+        assert!(begin <= end);
+        let mut count = 0;
+        let mut begin_byte = None;
+        let mut end_byte = None;
+
+        // This could be even more efficient by not decoding,
+        // only finding the char boundaries
+        for (idx, _) in self.char_indices() {
+            if count == begin { begin_byte = Some(idx); }
+            if count == end { end_byte = Some(idx); break; }
+            count += 1;
+        }
+        if begin_byte.is_none() && count == begin { begin_byte = Some(self.len()) }
+        if end_byte.is_none() && count == end { end_byte = Some(self.len()) }
+
+        match (begin_byte, end_byte) {
+            (None, _) => panic!("slice_chars: `begin` is beyond end of string"),
+            (_, None) => panic!("slice_chars: `end` is beyond end of string"),
+            (Some(a), Some(b)) => unsafe { self.slice_unchecked(a, b) }
+        }
+    }    
+}
+
 fn cleanup_key(key: &str) -> &str {
     if key.starts_with("[") && key.ends_with("]") {
-        key.slice_chars(1, key.len()-1)
+        key._slice_chars(1, key.len()-1)
     } else {
         key
     }
@@ -100,7 +131,7 @@ fn apply_object(keys: &[String], val: Json) -> Json {
         let key = keys.get(0).unwrap();
         if key == "[]" {
             let mut new_array = create_array();
-            let item = apply_object(keys.tail(), val);
+            let item = apply_object(&keys[1..], val);
             push_item_to_array(&mut new_array, item);
             return new_array;
         } else {
@@ -109,12 +140,12 @@ fn apply_object(keys: &[String], val: Json) -> Json {
 
             match array_index {
                 Ok(idx) => {
-                    let result = apply_object(keys.tail(), val);
+                    let result = apply_object(&keys[1..], val);
                     let item = create_idx_merger(idx, result);
                     return item;
                 },
                 Err(_) => {
-                    return create_object_with_key(key.to_string(), apply_object(keys.tail(), val));
+                    return create_object_with_key(key.to_string(), apply_object(&keys[1..], val));
                 }
             }
         }
