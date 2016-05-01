@@ -9,7 +9,8 @@ keywords = ["json", "web", "url", "parser"]
 license = "MIT"
 
 [dependencies]
-rustc-serialize = "0.3"
+serde = "0.7"
+serde_json = "0.7"
 url = "1"
 regex = "0.1"
 lazy_static = "0.2"
