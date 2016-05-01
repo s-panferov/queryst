@@ -6,8 +6,9 @@ A query string parsing library for Rust inspired by https://github.com/hapijs/qs
 
 ```toml
 # Cargo.toml
-[dependencies.queryst]
-git = "https://github.com/rustless/queryst"
+
+[dependencies]
+queryst = "1"
 ```
 
 [API docs](http://rustless.org/queryst/doc/queryst)
@@ -16,7 +17,7 @@ git = "https://github.com/rustless/queryst"
 
 ## Usage
 
-Use **queryst** library to parse query-string to corresponding [json] values.
+Use **queryst** library to parse query-string to corresponding [json values].
 
 ```rust
 use query::parse;
@@ -25,13 +26,13 @@ use query::parse;
 let object = parse("foo[0][a]=a&foo[0][b]=b&foo[1][a]=aa&foo[1][b]=bb");
 ```
 
-You can work with raw Json value or decode it to Rust strucure by using serialize::json::decode function (see examples in [json]).
-
-[json]: http://doc.rust-lang.org/serialize/json/index.html
+[json values]: https://github.com/serde-rs/json
 
 ## Description
 
-**queryst** allows you to create nested objects within your query strings, by surrounding the name of sub-keys with square brackets `[]`. For example, the string `'foo[bar]=baz'` converts to this JSON:
+**queryst** allows you to create nested objects within your query strings,
+by surrounding the name of sub-keys with square brackets `[]`.
+or example, the string `'foo[bar]=baz'` converts to this JSON:
 
 ```json
 {
@@ -76,13 +77,13 @@ parse('a[0]=c&a[1]=b');
 // { "a": ["c", "b"] }
 ```
 
-Note that the only difference between an index in an array and a key in an object is that the value between the brackets must be a number to create an array. 
+Note that the only difference between an index in an array and a key in an object is that the value between the brackets must be a number to create an array.
 
 **queryst** **does't** allow to specify sparse indexes on arrays and will convert target array to object:
 
 ```javascript
 parse('a[1]=b&a[15]=c');
-// { "a": {"1":"b", "15":"c"} }
+// { "a": {"1": "b", "15": "c"} }
 ```
 
 Also if you mix notations, **queryst** will merge the two items into an object:

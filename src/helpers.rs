@@ -1,18 +1,17 @@
-use serialize::json::{Json, Object};
-use serialize::json::ToJson;
+use serde_json::{Value};
 use std::collections::BTreeMap;
 
-use mutable_json::MutableJson;
+pub type Object = BTreeMap<String, Value>;
 
-pub fn object_from_list(obj: &Json) -> Json {
+pub fn object_from_list(obj: &Value) -> Value {
     let list = obj.as_array().unwrap();
-    let mut tree: BTreeMap<String,Json> = BTreeMap::new();
+    let mut tree: BTreeMap<String,Value> = BTreeMap::new();
 
     for (idx, item) in list.iter().enumerate() {
         tree.insert(idx.to_string(), item.clone());
     }
 
-    tree.to_json()
+    Value::Object(tree)
 }
 
 fn index(obj: &Object) -> Option<usize> {
@@ -21,9 +20,9 @@ fn index(obj: &Object) -> Option<usize> {
     for key in obj.keys() {
         let num_key = key[..].parse();
         match num_key {
-            Ok(idx) if index <= idx => { 
-                index = idx; 
-                has_index = true; 
+            Ok(idx) if index <= idx => {
+                index = idx;
+                has_index = true;
             },
             _ => ()
         }
@@ -43,12 +42,12 @@ pub fn next_index(obj: &Object) -> usize {
     }
 }
 
-pub fn create_array() -> Json {
-    let vec: Vec<Json> = vec![];
-    return Json::Array(vec);
+pub fn create_array() -> Value {
+    let vec: Vec<Value> = vec![];
+    return Value::Array(vec);
 }
 
-pub fn push_item_to_array(array: &mut Json, item: Json) {
+pub fn push_item_to_array(array: &mut Value, item: Value) {
     let vec = array.as_array_mut().unwrap();
     vec.push(item);
 }

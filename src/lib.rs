@@ -1,4 +1,5 @@
-extern crate rustc_serialize as serialize;
+extern crate serde;
+extern crate serde_json;
 
 extern crate regex;
 extern crate url;
@@ -9,7 +10,6 @@ extern crate lazy_static;
 pub use parser::{parse, ParseResult, ParseError, ParseErrorKind};
 
 mod merge;
-mod mutable_json;
 mod helpers;
 mod parser;
 
