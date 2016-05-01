@@ -1,7 +1,7 @@
 [package]
 
 name = "queryst"
-version = "0.1.16"
+version = "1.0.0"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
 description = "Rust query string parser with nesting support"
 repository = "https://github.com/rustless/queryst"
