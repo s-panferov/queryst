@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::collections::BTreeMap;
 use serialize::json::{Json, ToJson};
-use url::percent_encoding::lossy_utf8_percent_decode;
+use url::percent_encoding::percent_decode;
 
 use merge::merge;
 use helpers::{create_array, push_item_to_array};
@@ -27,7 +27,8 @@ pub struct ParseError {
 pub type ParseResult<T> = Result<T,ParseError>;
 
 pub fn decode_component(source: &str) -> Result<String,String> {
-    return Ok(lossy_utf8_percent_decode(source.as_bytes()));
+    let result = percent_decode(source.as_bytes()).decode_utf8_lossy().to_string();
+    return Ok(result);
 }
 
 fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
