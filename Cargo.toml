@@ -9,8 +9,8 @@ keywords = ["json", "web", "url", "parser"]
 license = "MIT"
 
 [dependencies]
-serde = "0.7"
-serde_json = "0.7"
+serde = "0.8"
+serde_json = "0.8"
 url = "1"
 regex = "0.1"
 lazy_static = "0.2"
