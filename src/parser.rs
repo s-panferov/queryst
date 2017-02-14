@@ -130,7 +130,11 @@ fn apply_object(keys: &[String], val: Value) -> Value {
 pub fn parse(params: &str) -> ParseResult<Value> {
     let tree: BTreeMap<String,Value> = BTreeMap::new();
     let mut obj = Value::Object(tree);
-    let pairs = parse_pairs(params);
+    let decoded_params = match decode_component(params) {
+        Ok(val) => val,
+        Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
+    };
+    let pairs = parse_pairs(&decoded_params);
     for &(key, value) in pairs.iter() {
         let parse_key_res = try!(parse_key(key));
         let key_chain = &parse_key_res[0..];
@@ -211,5 +215,10 @@ mod tests {
         eq_str(parse("a[b%20c]=c%20d").unwrap(),
             r#"{"a":{"b c":"c d"}}"#);
     }
-}
 
+    #[test]
+    fn it_parses_explicit_encoded_array() {
+        eq_str(parse("a%5B%5D=b&a%5B%5D=c&a%5B%5D=d").unwrap(),
+            r#"{"a":["b","c","d"]}"#);
+    }
+}
