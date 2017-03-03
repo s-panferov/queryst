@@ -1,6 +1,5 @@
 use regex::Regex;
-use std::collections::BTreeMap;
-use serde_json::{Value};
+use serde_json::{Value, Map, Number};
 use url::percent_encoding::percent_decode;
 
 use merge::merge;
@@ -10,6 +9,8 @@ lazy_static! {
     static ref PARENT_REGEX: Regex = Regex::new(r"^([^][]+)").unwrap();
     static ref CHILD_REGEX: Regex = Regex::new(r"(\[[^][]*\])").unwrap();
 }
+
+type Object = Map<String, Value>;
 
 #[derive(Debug)]
 #[allow(missing_copy_implementations)]
@@ -85,14 +86,14 @@ fn cleanup_key(key: &str) -> &str {
 }
 
 fn create_idx_merger(idx: u64, obj: Value) -> Value {
-    let mut tree: BTreeMap<String,Value> = BTreeMap::new();
-    tree.insert("__idx".to_string(), Value::U64(idx));
+    let mut tree = Object::new();
+    tree.insert("__idx".to_string(), Value::Number(Number::from(idx)));
     tree.insert("__object".to_string(), obj);
     return Value::Object(tree)
 }
 
 fn create_object_with_key(key: String, obj: Value) -> Value {
-    let mut tree: BTreeMap<String,Value> = BTreeMap::new();
+    let mut tree = Object::new();
     tree.insert(key, obj);
     return Value::Object(tree)
 }
@@ -128,7 +129,7 @@ fn apply_object(keys: &[String], val: Value) -> Value {
 }
 
 pub fn parse(params: &str) -> ParseResult<Value> {
-    let tree: BTreeMap<String,Value> = BTreeMap::new();
+    let tree = Object::new();
     let mut obj = Value::Object(tree);
     let decoded_params = match decode_component(params) {
         Ok(val) => val,
