@@ -1,11 +1,10 @@
-use serde_json::{Value};
-use std::collections::BTreeMap;
+use serde_json::{Value, Map};
 
-pub type Object = BTreeMap<String, Value>;
+type Object = Map<String, Value>;
 
 pub fn object_from_list(obj: &Value) -> Value {
     let list = obj.as_array().unwrap();
-    let mut tree: BTreeMap<String,Value> = BTreeMap::new();
+    let mut tree = Object::new();
 
     for (idx, item) in list.iter().enumerate() {
         tree.insert(idx.to_string(), item.clone());

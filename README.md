@@ -1,6 +1,8 @@
 ## What is Queryst?
 
-[![Build Status](https://travis-ci.org/rustless/queryst.svg?branch=master)](https://travis-ci.org/rustless/queryst)
+**This is a fork of the original, with serde and serde_json updated to 0.9**
+
+[![Build Status](https://travis-ci.org/rustless/queryst.svg?branch=master)](https://travis-ci.org/lord/queryst-prime)
 
 A query string parsing library for Rust inspired by https://github.com/hapijs/qs. A part of REST-like API micro-framework [Rustless].
 

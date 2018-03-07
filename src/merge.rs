@@ -113,7 +113,7 @@ fn merge_list_and_merger(to: &mut Value, from: &Value) -> Option<Value> {
         to_vec.insert(to_index, source_obj.clone());
         None
     } else {
-        let mut new_obj = object_from_list(&to_value(to_vec));
+        let mut new_obj = object_from_list(&to_value(to_vec).expect("query string list merging failed"));
         merge_object_and_merger(&mut new_obj, from);
         return Some(new_obj);
     }
