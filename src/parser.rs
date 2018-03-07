@@ -6,8 +6,8 @@ use merge::merge;
 use helpers::{create_array, push_item_to_array};
 
 lazy_static! {
-    static ref PARENT_REGEX: Regex = Regex::new(r"^([^][]+)").unwrap();
-    static ref CHILD_REGEX: Regex = Regex::new(r"(\[[^][]*\])").unwrap();
+    static ref PARENT_REGEX: Regex = Regex::new(r"^([^\]\[]+)").unwrap();
+    static ref CHILD_REGEX: Regex = Regex::new(r"(\[[^\]\[]*\])").unwrap();
 }
 
 type Object = Map<String, Value>;
@@ -59,7 +59,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
 
     match PARENT_REGEX.captures(key) {
         Some(captures) => {
-            match decode_component(captures.at(1).unwrap()) {
+            match decode_component(captures.get(1).unwrap().as_str()) {
                 Ok(decoded_key) => keys.push(decoded_key),
                 Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
             }
@@ -68,7 +68,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     };
 
     for captures in CHILD_REGEX.captures_iter(key) {
-        match decode_component(captures.at(1).unwrap()) {
+        match decode_component(captures.get(1).unwrap().as_str()) {
             Ok(decoded_key) => keys.push(decoded_key),
             Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
         }
