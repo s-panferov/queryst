@@ -1,6 +1,6 @@
 [package]
 
-name = "queryst-prime"
+name = "queryst"
 version = "2.0.0"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>", "Robert Lord <hello@lord.io>"]
 description = "Rust query string parser with nesting support, forked to update Serde"
