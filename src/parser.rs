@@ -1,3 +1,4 @@
+#[cfg(feature = "regex1")]
 use regex::Regex;
 use serde_json::{Value, Map, Number};
 use url::percent_encoding::percent_decode;
@@ -5,6 +6,7 @@ use url::percent_encoding::percent_decode;
 use merge::merge;
 use helpers::{create_array, push_item_to_array};
 
+#[cfg(feature = "regex1")]
 lazy_static! {
     static ref PARENT_REGEX: Regex = Regex::new(r"^([^\]\[]+)").unwrap();
     static ref CHILD_REGEX: Regex = Regex::new(r"(\[[^\]\[]*\])").unwrap();
@@ -54,6 +56,7 @@ fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
     return pairs
 }
 
+#[cfg(feature = "regex1")]
 fn parse_key(key: &str) -> ParseResult<Vec<String>> {
     let mut keys: Vec<String> = vec![];
 
@@ -76,6 +79,42 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
 
     Ok(keys)
 }
+
+#[cfg(not(feature = "regex1"))]
+fn parse_key(key: &str) -> ParseResult<Vec<String>> {
+    let mut keys: Vec<String> = vec![];
+
+    match key.split(|c| c=='[' || c==']').next() {
+        Some(parent) if !parent.is_empty() =>  {
+            match decode_component(parent) {
+                Ok(decoded_key) => keys.push(decoded_key),
+                Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
+            }
+        }
+        _ => ()
+    }
+
+    let mut prev_bracket = None;
+    for (idx, ch) in key.char_indices() {
+        match ch {
+            '[' => prev_bracket = Some(idx),
+            ']' => {
+                if let Some(prev_idx) = prev_bracket {
+                    prev_bracket = None;
+                    let child = &key[prev_idx..=idx];
+                    match decode_component(child) {
+                        Ok(decoded_key) => keys.push(decoded_key),
+                        Err(err_msg) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err_msg })
+                    }
+                }
+            }
+            _ => (),
+        }
+    }
+
+    Ok(keys)
+}
+
 
 fn cleanup_key(key: &str) -> &str {
     if key.starts_with("[") && key.ends_with("]") {

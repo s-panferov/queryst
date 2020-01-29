@@ -1,16 +1,20 @@
 [package]
 
 name = "queryst"
-version = "2.0.0"
+version = "2.0.1"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>", "Robert Lord <hello@lord.io>"]
 description = "Rust query string parser with nesting support, forked to update Serde"
 repository = "https://github.com/rustless/queryst"
 keywords = ["json", "web", "url", "parser"]
 license = "MIT"
 
+[features]
+default = ["regex1"]
+regex1 = ["regex", "lazy_static"]
+
 [dependencies]
 serde = "^1"
 serde_json = "^1"
 url = "^1"
-regex = "^0.2"
-lazy_static = "^1"
+regex = { version = "^0.2", optional = true }
+lazy_static = { version = "^1", optional = true }
