@@ -245,6 +245,12 @@ mod tests {
     }
 
     #[test]
+    fn it_transforms_standalone_keys() {
+        eq_str(parse("foo=bar&baz").unwrap(),
+            r#"{"foo":"bar","baz":null}"#);
+    }
+
+    #[test]
     fn it_doesnt_produce_empty_keys() {
         eq_str(parse("_r=1&").unwrap(),
             r#"{"_r":"1"}"#);
