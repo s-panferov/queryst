@@ -179,7 +179,7 @@ pub fn parse(params: &str) -> ParseResult<Value> {
         let parse_key_res = try!(parse_key(key));
         let key_chain = &parse_key_res[0..];
         let decoded_value = match value {
-            None => Value::Null,
+            None => Value::default(),
             Some(val) => match decode_component(val) {
                 Ok(decoded_value) => Value::String(decoded_value),
                 Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
