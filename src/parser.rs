@@ -178,11 +178,14 @@ pub fn parse(params: &str) -> ParseResult<Value> {
     for &(key, value) in pairs.iter() {
         let parse_key_res = try!(parse_key(key));
         let key_chain = &parse_key_res[0..];
-        let decoded_value = match decode_component(value.unwrap_or("")) {
-            Ok(val) => val,
-            Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
+        let decoded_value = match value {
+            None => Value::Null,
+            Some(val) => match decode_component(val) {
+                Ok(decoded_value) => Value::String(decoded_value),
+                Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
+            }
         };
-        let partial = apply_object(key_chain, Value::String(decoded_value));
+        let partial = apply_object(key_chain, decoded_value);
         merge(&mut obj, &partial);
     }
 
@@ -255,7 +258,7 @@ mod tests {
     #[test]
     fn it_transforms_standalone_keys() {
         eq_str(parse("foo=bar&baz").unwrap(),
-            r#"{"foo":"bar","baz":null}"#);
+            r#"{"baz":null,"foo":"bar"}"#);
     }
 
     #[test]
