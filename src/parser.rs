@@ -34,25 +34,25 @@ pub fn decode_component(source: &str) -> Result<String,String> {
     return Ok(result);
 }
 
-fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
-
-    let mut pairs = vec![];
-
-    for part in body.split("&") {
-        let separator = part.find("]=")
-                            .and_then(|pos| Some(pos+1))
-                            .or_else(|| part.find("="));
-
-        match separator {
-            None => pairs.push((part, None)),
-            Some(pos) => {
-                let key = &part[..pos];
-                let val = &part[(pos + 1)..];
-                pairs.push((key, Some(val)));
-            }
+fn parse_pair(part: &str) -> (&str, Option<&str>) {
+    let separator = part.find("]=")
+                        .and_then(|pos| Some(pos+1))
+                        .or_else(|| part.find("="));
+    match separator {
+        None => return (part, None),
+        Some(pos) => {
+            let key = &part[..pos];
+            let val = &part[(pos + 1)..];
+            return (key, Some(val));
         }
     }
+}
 
+fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
+    let mut pairs = vec![];
+    for part in body.split("&") {
+        pairs.push(parse_pair(part));
+    }
     return pairs
 }
 
@@ -192,10 +192,16 @@ pub fn parse(params: &str) -> ParseResult<Value> {
 #[cfg(test)]
 mod tests {
     use parse;
+    use super::parse_pair;
     use serde_json::{Value, to_string};
 
     fn eq_str(value: Value, string: &str) {
         assert_eq!(&to_string(&value).unwrap(), string)
+    }
+
+    #[test]
+    fn test_parse_pair() {
+        assert_eq!(parse_pair("foo=1"), ("foo", Some("1")));
     }
 
     #[test]
