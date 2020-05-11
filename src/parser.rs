@@ -202,6 +202,8 @@ mod tests {
     #[test]
     fn test_parse_pair() {
         assert_eq!(parse_pair("foo=1"), ("foo", Some("1")));
+        assert_eq!(parse_pair("empty="), ("empty", Some("")));
+        assert_eq!(parse_pair("noval"), ("noval", None));
     }
 
     #[test]
