@@ -22,7 +22,7 @@ queryst = "1"
 Use **queryst** library to parse query-string to corresponding [json values].
 
 ```rust
-use query::parse;
+use queryst::parse;
 
 // will contain result as Json value
 let object = parse("foo[0][a]=a&foo[0][b]=b&foo[1][a]=aa&foo[1][b]=bb");

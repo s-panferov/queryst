@@ -176,7 +176,7 @@ pub fn parse(params: &str) -> ParseResult<Value> {
     };
     let pairs = parse_pairs(&decoded_params);
     for &(key, value) in pairs.iter() {
-        let parse_key_res = try!(parse_key(key));
+        let parse_key_res = parse_key(key)?;
         let key_chain = &parse_key_res[0..];
         let decoded_value = match value {
             None => Value::default(),

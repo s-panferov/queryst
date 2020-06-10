@@ -1,12 +1,13 @@
 [package]
 
 name = "queryst"
-version = "2.0.2-alpha.0"
+version = "2.0.3-alpha.0"
 authors = ["Stanislav Panferov <fnight.m@gmail.com>", "Robert Lord <hello@lord.io>"]
 description = "Rust query string parser with nesting support, forked to update Serde"
 repository = "https://github.com/rustless/queryst"
 keywords = ["json", "web", "url", "parser"]
 license = "MIT"
+rust = "1.13"
 
 [features]
 default = ["regex1"]
