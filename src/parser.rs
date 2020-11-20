@@ -170,7 +170,7 @@ fn apply_object(keys: &[String], val: Value) -> Value {
 pub fn parse(params: &str) -> ParseResult<Value> {
     let tree = Object::new();
     let mut obj = Value::Object(tree);
-    let decoded_params = match decode_component(params) {
+    let decoded_params = match decode_component(&params.replace("+", " ")) {
         Ok(val) => val,
         Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
     };
@@ -261,4 +261,8 @@ mod tests {
         eq_str(parse("a%5B%5D=b&a%5B%5D=c&a%5B%5D=d").unwrap(),
             r#"{"a":["b","c","d"]}"#);
     }
+    #[test]
+    fn it_parses_plus_sign() {
+        eq_str(parse("a=b%20c+d%2B").unwrap(), r#"{"a":"b c d+"}"#);
+     }
 }
