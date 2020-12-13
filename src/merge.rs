@@ -156,6 +156,7 @@ pub fn merge(to: &mut Value, from: &Value) -> Option<Value> {
     match to {
         &mut Value::Object(_) => {
             match from {
+                &Value::Null => None,
                 &Value::Array(_) => merge_object_and_array(to, from),
                 &Value::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
                 &Value::Object(_) => merge_object_and_object(to, from),
@@ -165,6 +166,7 @@ pub fn merge(to: &mut Value, from: &Value) -> Option<Value> {
         }
         &mut Value::Array(_) => {
             match from {
+                &Value::Null => None,
                 &Value::Array(_) => merge_list_and_list(to, from),
                 &Value::Object(_) if is_merger(from) => merge_list_and_merger(to, from),
                 &Value::Object(_) => merge_list_and_object(to, from),
