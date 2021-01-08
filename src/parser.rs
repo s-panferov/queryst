@@ -50,6 +50,11 @@ fn parse_pair(part: &str) -> (&str, Option<&str>) {
 
 fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
     let mut pairs = vec![];
+    #[cfg(feature = "semicolon-delimiters")]
+    for part in body.split(|c| c == '&' || c == ';') {
+        pairs.push(parse_pair(part));
+    }
+    #[cfg(not(feature = "semicolon-delimiters"))]
     for part in body.split("&") {
         pairs.push(parse_pair(part));
     }

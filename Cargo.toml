@@ -12,6 +12,7 @@ rust = "1.13"
 [features]
 default = ["regex1"]
 regex1 = ["regex", "lazy_static"]
+semicolon-delimiters = []
 
 [dependencies]
 serde = "^1"
