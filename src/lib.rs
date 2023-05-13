@@ -9,7 +9,7 @@ extern crate percent_encoding;
 #[macro_use]
 extern crate lazy_static;
 
-pub use parser::{parse, ParseResult, ParseError, ParseErrorKind};
+pub use crate::parser::{parse, ParseResult, ParseError, ParseErrorKind};
 
 mod merge;
 mod helpers;

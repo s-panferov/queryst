@@ -3,8 +3,8 @@ use regex::Regex;
 use serde_json::{Value, Map, Number};
 use percent_encoding::percent_decode;
 
-use merge::merge;
-use helpers::{create_array, push_item_to_array};
+use crate::merge::merge;
+use crate::helpers::{create_array, push_item_to_array};
 
 #[cfg(feature = "regex1")]
 lazy_static! {
@@ -31,29 +31,28 @@ pub type ParseResult<T> = Result<T,ParseError>;
 
 pub fn decode_component(source: &str) -> Result<String,String> {
     let result = percent_decode(source.as_bytes()).decode_utf8_lossy().to_string();
-    return Ok(result);
+    Ok(result)
 }
 
 fn parse_pair(part: &str) -> (&str, Option<&str>) {
-    let separator = part.find("]=")
-                        .and_then(|pos| Some(pos+1))
-                        .or_else(|| part.find("="));
+    let separator = part.find("]=").map(|pos| pos+1)
+                        .or_else(|| part.find('='));
     match separator {
-        None => return (part, None),
+        None => (part, None),
         Some(pos) => {
             let key = &part[..pos];
             let val = &part[(pos + 1)..];
-            return (key, Some(val));
+            (key, Some(val))
         }
     }
 }
 
 fn parse_pairs(body: &str) -> Vec<(&str, Option<&str>)> {
     let mut pairs = vec![];
-    for part in body.split("&") {
+    for part in body.split('&') {
         pairs.push(parse_pair(part));
     }
-    return pairs
+    pairs
 }
 
 #[cfg(feature = "regex1")]
@@ -117,7 +116,7 @@ fn parse_key(key: &str) -> ParseResult<Vec<String>> {
 
 
 fn cleanup_key(key: &str) -> &str {
-    if key.starts_with("[") && key.ends_with("]") {
+    if key.starts_with('[') && key.ends_with(']') {
         &key[1..(key.len()-1)]
     } else {
         key
@@ -128,24 +127,24 @@ fn create_idx_merger(idx: u64, obj: Value) -> Value {
     let mut tree = Object::new();
     tree.insert("__idx".to_string(), Value::Number(Number::from(idx)));
     tree.insert("__object".to_string(), obj);
-    return Value::Object(tree)
+    Value::Object(tree)
 }
 
 fn create_object_with_key(key: String, obj: Value) -> Value {
     let mut tree = Object::new();
     tree.insert(key, obj);
-    return Value::Object(tree)
+    Value::Object(tree)
 }
 
 fn apply_object(keys: &[String], val: Value) -> Value {
 
-    if keys.len() > 0 {
+    if !keys.is_empty() {
         let key = keys.get(0).unwrap();
         if key == "[]" {
             let mut new_array = create_array();
             let item = apply_object(&keys[1..], val);
             push_item_to_array(&mut new_array, item);
-            return new_array;
+            new_array
         } else {
             let key = cleanup_key(key);
             let array_index = key.parse();
@@ -153,24 +152,24 @@ fn apply_object(keys: &[String], val: Value) -> Value {
             match array_index {
                 Ok(idx) => {
                     let result = apply_object(&keys[1..], val);
-                    let item = create_idx_merger(idx, result);
-                    return item;
+                    
+                    create_idx_merger(idx, result)
                 },
                 Err(_) => {
-                    return create_object_with_key(key.to_string(), apply_object(&keys[1..], val));
+                    create_object_with_key(key.to_string(), apply_object(&keys[1..], val))
                 }
             }
         }
 
     } else {
-        return val;
+        val
     }
 }
 
 pub fn parse(params: &str) -> ParseResult<Value> {
     let tree = Object::new();
     let mut obj = Value::Object(tree);
-    let decoded_params = match decode_component(&params.replace("+", " ")) {
+    let decoded_params = match decode_component(&params.replace('+', " ")) {
         Ok(val) => val,
         Err(err) => return Err(ParseError{ kind: ParseErrorKind::DecodingError, message: err })
     };
@@ -194,7 +193,7 @@ pub fn parse(params: &str) -> ParseResult<Value> {
 
 #[cfg(test)]
 mod tests {
-    use parse;
+    use crate::parse;
     use super::parse_pair;
     use serde_json::{Value, to_string};
 

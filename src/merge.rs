@@ -1,5 +1,5 @@
 use serde_json::{Value, to_value};
-use helpers::{
+use crate::helpers::{
     object_from_list,
     next_index,
     create_array,
@@ -160,7 +160,7 @@ pub fn merge(to: &mut Value, from: &Value) -> Option<Value> {
                 &Value::Array(_) => merge_object_and_array(to, from),
                 &Value::Object(_) if is_merger(from) => merge_object_and_merger(to, from),
                 &Value::Object(_) => merge_object_and_object(to, from),
-                &Value::String(_) => return Some(from.clone()),
+                &Value::String(_) => Some(from.clone()),
                 _ => panic!("Unknown merge")
             }
         }
@@ -175,7 +175,7 @@ pub fn merge(to: &mut Value, from: &Value) -> Option<Value> {
             }
         },
         &mut Value::String(_) => {
-            return merge_string_and_json(to, from)
+            merge_string_and_json(to, from)
         }
         _ => panic!("Unknown merge")
     }

@@ -43,7 +43,7 @@ pub fn next_index(obj: &Object) -> usize {
 
 pub fn create_array() -> Value {
     let vec: Vec<Value> = vec![];
-    return Value::Array(vec);
+    Value::Array(vec)
 }
 
 pub fn push_item_to_array(array: &mut Value, item: Value) {
