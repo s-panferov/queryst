@@ -1,12 +1,11 @@
 [package]
 name = "queryst"
 version = "2.1.1-alpha.0"
-authors = ["Stanislav Panferov <fnight.m@gmail.com>", "Robert Lord <hello@lord.io>"]
+authors = ["Stanislav Panferov <fnight.m@gmail.com>"]
 description = "Rust query string parser with nesting support, forked to update Serde"
 repository = "https://github.com/rustless/queryst"
 keywords = ["json", "web", "url", "parser"]
 license = "MIT"
-rust = "1.13"
 include = ["src/**/*", "LICENSE", "README.md"]
 
 [features]
